@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $("#btnpersonas").click(function() {
+                let url = "https://apipersonaspgsss.azurewebsites.net/";
+                let request = "api/personas";
+                $.ajax({
+                    url: url + request, 
+                    method: "GET",
+                    success: function(data){
+                        console.log("Todo funciona!!!");
+                        var html = "";
+                        $.each(data, function(index, persona) {
+                            html += "<tr>";
+                            html += "<td>" + persona.idPersona + "</td>";
+                            html += "<td>" + persona.nombre + "</td>";
+                            html += "<td>" + persona.email + "</td>";
+                            html += "<td>" + persona.edad + "</td>";
+                            html += "</tr>";
+                        })
+                        $("#tablapersonas tbody").html(html);
+                    }
+                })
+            })
+        })
+    </script>
+}
+
+<div class="text-center">
+    <h1 class="display-4">Api Personas Client</h1>
+    <button id="btnpersonas" class="btn btn-warning">
+        Load personas
+    </button>
+    <table class="table table-bordered" id="tablapersonas">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Edad</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>

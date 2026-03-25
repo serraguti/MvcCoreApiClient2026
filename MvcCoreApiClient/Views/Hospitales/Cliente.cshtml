@@ -1,0 +1,44 @@
+﻿<h1>Api Hospitales Cliente</h1>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $("#botonhospitales").click(function() {
+                let url = "https://apicorehospitales-bbabf2gfdpcua3ck.francecentral-01.azurewebsites.net/";
+                let request = "api/hospitales";
+                $.ajax({
+                    url: url + request, 
+                    method: "GET",
+                    success: function(data){
+                        console.log("leyendo...");
+                        var html = "";
+                        $.each(data, function(index, hospital){
+                            html += "<tr>";
+                            html += "<td>" + hospital.nombre + "</td>";
+                            html += "<td>" + hospital.direccion + "</td>";
+                            html += "<td>" + hospital.telefono + "</td>";
+                            html += "<td>" + hospital.camas + "</td>";
+                            html += "</tr>";
+                        })
+                        $("#tablahospital tbody").html(html);
+                    }
+                })
+            })
+        })
+    </script>
+}
+
+<button id="botonhospitales" class="btn btn-dark">
+    Load Hospitales
+</button>
+<table id="tablahospital" class="table table-dark">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Camas</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>

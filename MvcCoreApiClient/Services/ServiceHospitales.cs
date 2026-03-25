@@ -1,6 +1,7 @@
 ﻿using MvcCoreApiClient.Models;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MvcCoreApiClient.Services
 {
@@ -10,9 +11,10 @@ namespace MvcCoreApiClient.Services
         //NECESITAMOS INDICAR EL TIPO DE DATOS QUE VAMOS A LEER
         private MediaTypeWithQualityHeaderValue header;
 
-        public ServiceHospitales()
+        public ServiceHospitales(IConfiguration configuration)
         {
-            this.ApiUrl = "https://apicorehospitales-bbabf2gfdpcua3ck.francecentral-01.azurewebsites.net/";
+            this.ApiUrl =
+                configuration.GetValue<string>("ApiUrls:ApiHospitales");
             this.header = new MediaTypeWithQualityHeaderValue
                 ("application/json");
         }
@@ -45,6 +47,32 @@ namespace MvcCoreApiClient.Services
                         (json);
                     return hospitales;
                 }else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public async Task<Hospital> FindHospitalAsync(int idHospital) 
+        { 
+            using (HttpClient client = new HttpClient())
+            {
+                string request = "api/hospitales/" + idHospital;
+                client.BaseAddress = new Uri(this.ApiUrl);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.header);
+                HttpResponseMessage response =
+                    await client.GetAsync(request);
+                if (response.IsSuccessStatusCode == true)
+                {
+                    //SI LAS PROPIEDADES DEL MODEL Y DEL JSON
+                    //SE LLAMAN IGUAL, NO ES NECESARIO DECORAR CON 
+                    //[JsonProperty] Y TAMPOCO UTILIZAR JsonConvert
+                    Hospital hospital =
+                        await response.Content.ReadAsAsync<Hospital>();
+                    return hospital;
+                }
+                else
                 {
                     return null;
                 }
